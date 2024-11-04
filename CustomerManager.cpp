@@ -6,8 +6,7 @@
 #include <algorithm>
 #include "Customer.h"
 
-class CustomerManager
-{
+class CustomerManager {
 private:
     std::ofstream outfile;
     std::ifstream readfile;
@@ -17,26 +16,35 @@ private:
     const std::string FILE_NAME = "registered.txt";
 public:
     CustomerManager(/* args */);
+
     ~CustomerManager();
+
     void registerCustomer();
+
     void saveCustomers();
+
     void removeCustomer(int id);
+
     void readCustomers();
 };
 
-CustomerManager::CustomerManager(/* args */)
-{
-    readCustomers();
-    while(true) {
-        registerCustomer();
-    }
+//Class init
+CustomerManager::CustomerManager(/* args */) {
 }
 
-CustomerManager::~CustomerManager()
-{
+//Destructor
+CustomerManager::~CustomerManager() {
     outfile.close();
 }
 
+/*
+ * registerCustomer Function
+ *
+ * This takes all inputs from user registering an account and generates a ten-digit ID for them,
+ * then appends them to the customer vector of type Customer (Customer.h).
+ *
+ * Then is saves the new customer to txt file with saveCustomers() Function.
+ */
 void CustomerManager::registerCustomer() {
     Customer newCustomer;
 
@@ -56,10 +64,18 @@ void CustomerManager::registerCustomer() {
     customerVector.push_back(newCustomer);
     saveCustomers();
 }
+
+/*
+ * saveCustomers Function
+ *
+ * This function opens the txt file and writes every customers information from the customerVector
+ * of type Customer (Customer.h), this needs to be called with after each addition or deletion of
+ * a customer to retain the txt validity.
+ */
 void CustomerManager::saveCustomers() {
     outfile.open(FILE_NAME);
     int count = 1;
-    for (const Customer customer : customerVector) {
+    for (const Customer customer: customerVector) {
         if (outfile.is_open()) {
             outfile << "customer " << count << std::endl;
             outfile << TAB + "CustID" << customer.id << std::endl;
@@ -74,20 +90,32 @@ void CustomerManager::saveCustomers() {
     }
     outfile.close();
 }
+
+/*
+ * removeCustomer Function
+ *
+ * This function looks through each id in the customerVector and erases the customer with the
+ * giving id in the parameter.
+ */
 void CustomerManager::removeCustomer(int id) {
-    for (int i = 0; i < customerVector.size(); ++i){
-        if(id == customerVector[i].id){
+    for (int i = 0; i < customerVector.size(); ++i) {
+        if (id == customerVector[i].id) {
             customerVector.erase(customerVector.begin() + i);
         }
     }
     saveCustomers();
 }
 
+/*
+ *  readCustomers Function
+ *
+ *  This reads the text file and stores each entry into a vector of type Customer (from Customer.h) to be manipulated
+ */
 void CustomerManager::readCustomers() {
     readfile.open(FILE_NAME);
     std::vector<Customer> tempCustomers;
     std::string line;
-    while(getline(readfile, line)){
+    while (getline(readfile, line)) {
 
         if (line.find("customer") != std::string::npos) {
             Customer customer;
@@ -109,8 +137,4 @@ void CustomerManager::readCustomers() {
     customerVector = tempCustomers;
 
     readfile.close();
-}
-
-int main() {
-    CustomerManager();
 }
