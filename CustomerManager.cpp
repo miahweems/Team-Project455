@@ -63,7 +63,7 @@ void CustomerManager::registerCustomer() {
         std::cout << "Enter your Username: ";
         std::cin >> newCustomer.userName;
         if (usernameUnique(newCustomer.userName) && !isValidUsername(newCustomer.userName)) {
-            std::cerr << "\nInvalid Username! Must start with U, less than ten characters, and unique.";
+            std::cerr << "\nInvalid Username! Must start with U, less than ten characters, followed by at most three numbers, and unique.";
             break;
         }
         std::cout << "Enter your First Name: ";
