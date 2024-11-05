@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include "Customer.h"
+#include "bools.cpp"
 
 class CustomerManager {
 private:
@@ -26,6 +27,16 @@ public:
     void removeCustomer(int id);
 
     void readCustomers();
+
+    bool usernameUnique(const std::string &username);
+
+    bool creditcardUnique(const std::string &creditcard);
+
+    int uniqueID();
+
+    Customer loginWithUsername(std::string username);
+
+    void outputUsernamesAndIDs();
 };
 
 //Class init
@@ -46,24 +57,111 @@ CustomerManager::~CustomerManager() {
  * Then is saves the new customer to txt file with saveCustomers() Function.
  */
 void CustomerManager::registerCustomer() {
-    Customer newCustomer;
+    while (true) {
+        Customer newCustomer;
 
-    std::cout << "Enter your Username: ";
-    std::cin >> newCustomer.userName;
-    std::cout << "Enter your First Name: ";
-    std::cin >> newCustomer.firstName;
-    std::cout << "Enter your Last Name: ";
-    std::cin >> newCustomer.lastName;
-    std::cout << "Enter your Age: ";
-    std::cin >> newCustomer.age;
+        std::cout << "Enter your Username: ";
+        std::cin >> newCustomer.userName;
+        if (usernameUnique(newCustomer.userName) && !isValidUsername(newCustomer.userName)) {
+            std::cerr << "\nInvalid Username! Must start with U, less than ten characters, and unique.";
+            break;
+        }
+        std::cout << "Enter your First Name: ";
+        std::cin >> newCustomer.firstName;
+        if (!isValidName(newCustomer.firstName)) {
+            std::cerr
+                    << "\nInvalid Name! Must be less than twelve characters and not contain numbers or special characters.";
+            break;
+        }
+        std::cout << "Enter your Last Name: ";
+        std::cin >> newCustomer.lastName;
+        if (!isValidName(newCustomer.firstName)) {
+            std::cerr
+                    << "\nInvalid Name! Must be less than twelve characters and not contain numbers or special characters.";
+            break;
+        }
+        std::cout << "Enter your Age: ";
+        std::cin >> newCustomer.age;
+        if (!isValidAge(newCustomer.age)) {
+            std::cerr << "\nInvalid Age! Must be in between 18 and 100 and not start with zero.";
+            break;
+        }
+        std::cout << "Enter your Credit Card Information: ";
+        std::cin >> newCustomer.creditCard;
+        if (creditcardUnique(newCustomer.creditCard) && !isValidCreditCard(newCustomer.creditCard)) {
+            std::cerr << "\nInvalid Credit Card! Must be in xxxx-xxxx-xxxx format, cannot start with zero, \ndigits between zero and nine, and uniqe.";
+            break;
+        }
 
-    //while to check all id
-    srand(time(0));
-    newCustomer.id = rand() % (int(pow(10, 9)) - int((pow(10, 10) - 1))) + int(pow(10, 9));
+        newCustomer.id = uniqueID();
 
-    customerVector.push_back(newCustomer);
-    saveCustomers();
+        customerVector.push_back(newCustomer);
+        saveCustomers();
+        break;
+    }
 }
+
+/*
+ * usernameUnique Function
+ *
+ * This function looks at each username in the vector and compares it to the username parameter, then returns true if
+ * the username matches, then false if there is no match.
+ */
+
+bool CustomerManager::usernameUnique(const std::string &username) {
+    for (const auto &customer: customerVector) {
+        if (customer.userName == username) {
+            return true;
+        } else {
+            continue;
+        }
+    }
+    return false;
+}
+
+/*
+ * creditcardUnique Function
+ *
+ * This function looks through each card in the vector and compares it to the credit card parameter, there returns true
+ * if the card matches, then false if there is no match.
+ */
+bool CustomerManager::creditcardUnique(const std::string &creditcard) {
+    for (const auto &customer: customerVector) {
+        if (customer.creditCard == creditcard) {
+            return true;
+        } else {
+            continue;
+        }
+    }
+    return false;
+}
+
+/*
+ * uniqueID function
+ *
+ * this function creates a random number of ten digits and checks if there are no other ids to compare to. If there is
+ * it loops through each id and sees if the id matches and returns the id. Else it creates and new one and restarts
+ * the process.
+ */
+int CustomerManager::uniqueID() {
+    srand(time(0));
+    int id = rand() % (int(pow(10, 10)) - int(pow(10, 9))) + int(pow(10, 9));
+    while (true) {
+        if (customerVector.size() == 0) {
+            return id;
+        } else
+            for (const auto &customer: customerVector) {
+                if (customer.id != id) {
+                    return id;
+                } else {
+                    continue;
+                }
+            }
+        srand(time(0));
+        id = rand() % (int(pow(10, 10)) - int(pow(10, 9))) + int(pow(10, 9));
+    }
+}
+
 
 /*
  * saveCustomers Function
@@ -83,27 +181,13 @@ void CustomerManager::saveCustomers() {
             outfile << TAB << customer.firstName << std::endl;
             outfile << TAB << customer.lastName << std::endl;
             outfile << TAB << customer.age << std::endl;
+            outfile << TAB << customer.creditCard << std::endl;
             outfile << TAB << customer.rewardPoints << std::endl;
 
             ++count;
         }
     }
     outfile.close();
-}
-
-/*
- * removeCustomer Function
- *
- * This function looks through each id in the customerVector and erases the customer with the
- * giving id in the parameter.
- */
-void CustomerManager::removeCustomer(int id) {
-    for (int i = 0; i < customerVector.size(); ++i) {
-        if (id == customerVector[i].id) {
-            customerVector.erase(customerVector.begin() + i);
-        }
-    }
-    saveCustomers();
 }
 
 /*
@@ -128,7 +212,9 @@ void CustomerManager::readCustomers() {
             getline(readfile, line);
             customer.lastName = line.substr(TAB.length());
             getline(readfile, line);
-            customer.age = std::stoi(line.substr(TAB.length()));
+            customer.age = line.substr(TAB.length());
+            getline(readfile, line);
+            customer.creditCard = line.substr(TAB.length());
             getline(readfile, line);
             customer.rewardPoints = std::stoi(line.substr(TAB.length()));
             tempCustomers.push_back(customer);
@@ -137,4 +223,55 @@ void CustomerManager::readCustomers() {
     customerVector = tempCustomers;
 
     readfile.close();
+}
+
+/*
+ * loginWithUsername Function
+ *
+ * This function looks through each username in the customer vector and finds the matching username and returns the
+ * customer struct with all the user's information. If username is not found then it cerrs that the account doesn't
+ * exist.
+ */
+Customer CustomerManager::loginWithUsername(std::string username) {
+    for (const auto &account: customerVector) {
+        if (account.userName == username) {
+            return account;
+        } else {
+            continue;
+        }
+    }
+    std::cerr << "Account doesn't exits.";
+}
+
+/*
+ * outputCustomersAndID Function
+ *
+ * This function displays each account's username and ID
+ *
+ * Used for the manager to see what user to delete
+ */
+
+void CustomerManager::outputUsernamesAndIDs() {
+    for (const auto &account: customerVector) {
+        std::cout << "Username: " << account.userName << " ID: " << account.id;
+    }
+}
+
+
+/*
+ * removeCustomer Function
+ *
+ * This function looks through each id in the customerVector and erases the customer with the
+ * giving id in the parameter.
+ *
+ */
+void CustomerManager::removeCustomer(int id) {
+    for (int i = 0; i < customerVector.size(); ++i) {
+        if (id == customerVector[i].id) {
+            customerVector.erase(customerVector.begin() + i);
+        } else {
+            continue;
+        }
+    }
+    saveCustomers();
 }

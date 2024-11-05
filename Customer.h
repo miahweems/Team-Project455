@@ -8,8 +8,8 @@ struct Customer {
     std::string userName;
     std::string firstName;
     std::string lastName;
-    int age;
-    int creditCard;
+    std::string age;
+    std::string creditCard;
     int id;
     int rewardPoints = 0;
 };
