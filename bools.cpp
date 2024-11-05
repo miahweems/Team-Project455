@@ -32,7 +32,7 @@ bool isValidUsername(const string &username) {
 
     if (username.length() < 10 || username[0] != 'U' || username[1] != '_') {
 
-        return false;    //longer than 10 or doesnt begin with U_
+        return false;    //shorter than 10 or doesnt begin with U_
     }
     
     int digitCount = 0;
