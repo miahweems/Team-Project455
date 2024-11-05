@@ -10,7 +10,7 @@ using namespace std;
 */
 bool isValidName(const string &name) {
     
-    if (name.length() > 12) {
+    if (name.length() > 12 || name.length() < 1) {
         return false;
     }
 
