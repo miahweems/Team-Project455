@@ -59,6 +59,7 @@ CustomerManager::~CustomerManager() {
 void CustomerManager::registerCustomer() {
     while (true) {
         Customer newCustomer;
+        Customer existingCustomer;
 
         std::cout << "Enter your Username: ";
         std::cin >> newCustomer.userName;
