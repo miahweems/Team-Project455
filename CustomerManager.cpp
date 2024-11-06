@@ -36,6 +36,8 @@ public:
 
     Customer loginWithUsername(std::string username);
 
+    void outputUserInfo(int id);
+
     void outputUsernamesAndIDs();
 };
 
@@ -254,6 +256,27 @@ Customer CustomerManager::loginWithUsername(std::string username) {
 void CustomerManager::outputUsernamesAndIDs() {
     for (const auto &account: customerVector) {
         std::cout << "Username: " << account.userName << " ID: " << account.id;
+    }
+}
+/*
+ * outputUserInfo
+ *
+ * This function searches for all vectors id's then when it hits the correct one then it prints all of that
+ * users information
+ */
+void CustomerManager::outputUserInfo(int id) {
+    if (customerVector.size() == 0) {
+        std::cerr << "There are no users.\n";
+    } else {
+        for (const auto &account: customerVector) {
+            if (id == account.id) {
+                std::cout << "Username: " << account.userName << "\nFirst Name: " << account.firstName << "\nLast Name: "
+                << account.lastName << "\nAge: " << account.age <<"\nCredit Card: " << account.creditCard << "\nReward Points: "
+                << account.rewardPoints << "\nID: " << account.id;
+            } else {
+                continue;
+            }
+        }
     }
 }
 
