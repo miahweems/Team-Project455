@@ -1,26 +1,25 @@
 #include <string>
 #include <cctype>
 
-using namespace std;
 
 /* Return Type: Boolean
    Input Parameter: string
    Use: This function is used to validate whether the user's first and last name
         follow the specification requirements
 */
-bool isValidName(const string &name) {
-    
+bool isValidName(const std::string &name) {
     if (name.length() > 12 || name.length() < 1) {
         return false;
-    }
-
-    for (char c : name) {
-        if (!isalpha(c)) {
-            return false;
+    } else {
+        for (char c : name) {
+            if (!std::isalpha(c)) {
+                return false;
+            } else {
+                continue;
+            }
         }
+        return true;
     }
-    
-    return true;
 }
 
 /* Return Type: Boolean
@@ -28,123 +27,97 @@ bool isValidName(const string &name) {
    Use: This function is used to validate whether the user's username
         follows the specification requirements
 */
-bool isValidUsername(const string &username) {
-
+bool isValidUsername(const std::string &username) {
     if (username.length() < 10 || username[0] != 'U' || username[1] != '_') {
-
-        return false;    //shorter than 10 or doesnt begin with U_
-    }
-    
-    int digitCount = 0;
-
-    for (int i = 2; i < username.length() && isdigit(username[i]); i++) {
-        
-        digitCount++;
-        
-        if (digitCount > 3) {
-            return false;    //more than 3 digits
+        return false;
+    } else {
+        int digitCount = 0;
+        for (int i = 2; i < username.length() && std::isdigit(username[i]); i++) {
+            digitCount++;
+            if (digitCount > 3) {
+                return false;
+            } else {
+                continue;
+            }
         }
+        return true;
     }
-    
-    return true;
 }
-
 
 /* Return Type: Boolean
    Input Parameter: string
    Use: This function is used to validate whether the user's age
         follows the specification requirements
 */
-bool isValidAge(const string &ageStr) {
-
+bool isValidAge(const std::string &ageStr) {
     if (ageStr.empty() || ageStr[0] == '0') {
-        return false;            //cant start with zero
+        return false;
+    } else {
+        int age = std::stoi(ageStr);
+        if (age >= 18 && age <= 100) {
+            return true;
+        } else {
+            return false;
+        }
     }
-
-    int age = stoi(ageStr);
-
-    return age >= 18 && age <= 100;  //return true if between 18 and 100
 }
 
 /* Return Type: Boolean
    Input Parameter: string
    Use: This function is used to validate whether the user's credit card number
-       follows the specification requirements
+        follows the specification requirements
 */
-bool isValidCreditCard(const string &cardNumber) {
-
+bool isValidCreditCard(const std::string &cardNumber) {
     if (cardNumber.length() != 14) {
-        return false;                 //not valid length
-    }
-
-    if (cardNumber[0] == '0') {
-        return false;   //cant start with 0
-    }
-
-    for (int i = 0; i < cardNumber.length(); i++) {
-
-        if (i == 4 || i == 9) {
-            
-            if (cardNumber[i] != '-') {
-                return false;             // xxxx-xxxx-xxxx
-            }
-
+        return false;
+    } else {
+        if (cardNumber[0] == '0') {
+            return false;
         } else {
-            if (!isdigit(cardNumber[i])) { //must be nums
-                return false;
-            }   
+            for (int i = 0; i < cardNumber.length(); i++) {
+                if (i == 4 || i == 9) {
+                    if (cardNumber[i] != '-') {
+                        return false;
+                    } else {
+                        continue;
+                    }
+                } else {
+                    if (!std::isdigit(cardNumber[i])) {
+                        return false;
+                    } else {
+                        continue;
+                    }
+                }
+            }
+            return true;
         }
     }
-    return true;
-}
-
-/* Return Type: Boolean
-   Input Parameter: string
-   Use: This function is used to validate whether the system's customer ID
-       follows the specification requirements
-*/
-bool isValidCustID(const string &custID) {
-
-    if (custID.substr(0, 6) != "CustID" || custID.length() != 16) {
-        return false;
-    }
-
-    for (int i = 6; i < custID.length(); i++) {
-        
-        if (!isdigit(custID[i])) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-/* Return Type: Boolean
-   Input Parameter: string
-   Use: This function is used to validate whether the user's Product ID
-       follows the specification requirements
-*/
-bool isValidProductID(const string &prodID) {
-
-    if (prodID.substr(0,4) != "Prod" || prodID.length() != 9) {
-        return false;
-    }
-
-    for (int i = 4; i < prodID.length(); i++) {
-
-        if (!isdigit(prodID[i])) {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 /* Return Type: Boolean
    Input Parameter: int
    Use: This function is used to validate whether the number 
-       under consideration is positive
+        under consideration is positive
 */
 bool isPositive(int num) {
-    return num > 0;
+    if (num > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/* Return Type: Boolean
+   Input Parameter: int
+   Use: This function is used to validate user's selections
+   in the command line interface.
+*/
+bool isValidSelection(const int &choice) {
+
+    if (choice < 1 || choice > 9) {
+        return false;
+    }
+    else {
+        return true;
+    }
 }
