@@ -42,23 +42,45 @@ ProductManager::~ProductManager() {
  * Finally, it saves the new product to the products file with saveProducts().
  */
 void ProductManager::addProduct() {
-    Product newProduct;
-    
-    std::cout << "Enter Product Name: ";
-    std::cin.ignore();
-    std::getline(std::cin, newProduct.productName);
-    std::cout << "Enter Product Price: ";
-    std::cin >> newProduct.productPrice;
-    std::cout << "Enter Product Stock: ";
-    std::cin >> newProduct.productStock;
+    while (true) {
+        Product newProduct;
 
-    // Generate unique product ID
-    static int productIDCounter = 10000;  // For example, starting ID sequence
-    newProduct.productID = PRODID_PREFIX + std::to_string(productIDCounter++);
-    
-    productVector.push_back(newProduct);
-    saveProducts();
+        std::cout << "Enter Product Name: ";
+        std::cin.ignore();
+        std::getline(std::cin, newProduct.productName);
+        if (!isValidProductName(newProduct.productName)) {
+            std::cerr << "\nInvalid Product Name! Must be less than 20 characters and not contain special characters.";
+            continue;
+        }
+
+        std::cout << "Enter Product Price: ";
+        std::cin >> newProduct.productPrice;
+        if (!isValidProductPrice(newProduct.productPrice)) {
+            std::cerr << "\nInvalid Product Price! Must be a positive number.";
+            continue;
+        }
+
+        std::cout << "Enter Product Stock: ";
+        std::cin >> newProduct.productStock;
+        if (!isValidProductStock(newProduct.productStock)) {
+            std::cerr << "\nInvalid Product Stock! Must be a positive integer.";
+            continue;
+        }
+
+        // Generate unique Product ID
+        static int productIDCounter = 10000;  // Starting ID sequence
+        newProduct.productID = "Prod" + std::to_string(productIDCounter++);
+        if (!productIDUnique(newProduct.productID)) {
+            std::cerr << "\nGenerated Product ID is not unique. Please try again.";
+            continue;
+        }
+
+        productVector.push_back(newProduct);
+        saveProducts();
+        break;
+    }
 }
+
 
 /*
  * saveProducts Function
