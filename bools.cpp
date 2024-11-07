@@ -107,24 +107,28 @@ bool isPositive(int num) {
 }
 
 /* Return Type: Boolean
-   Input Parameter: int
-   Use: This function is used to validate user's selections
+   Input Parameter: string
+   Use: This function is used to validate user's entrance for price
    in the command line interface.
 */
 bool isValidProductPrice(const std::string &price) {
-    
-    if (price[0] != '$') {
-        return false;      //checks that string starts with dollar amount
-    } 
-    else if (price[1] == '-') {
-        return false;
+
+    bool decimalFound = false;
+    int decimalCount = 0; //counts digits after decimal encountered
+    if (!std::isdigit(price[0])) {
+        return false;      //checks that amount starts with a num ie: non negative
     }
+
     else {
-        bool decimalFound = false;
 
         for (int i = 1; i < price.length(); i++) {
             if (std::isdigit(price[i])) {
+                if (decimalFound){
+                    ++decimalCount;
+                }
+                else {
                 continue; //checks if digit
+                }
             }
             else if (price[i] == '.' && !decimalFound) {
                 decimalFound = true;  //blocks user from using more than one decimal
@@ -134,5 +138,5 @@ bool isValidProductPrice(const std::string &price) {
             }
         }
     }
-
+    return !decimalFound || decimalCount <= 2;
 }
