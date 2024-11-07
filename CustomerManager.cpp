@@ -28,9 +28,9 @@ public:
 
     void readCustomers();
 
-    bool usernameUnique(const std::string &username);
+    bool isUsernameUnique(const std::string &username);
 
-    bool creditcardUnique(const std::string &creditcard);
+    bool isCreditCardUnique(const std::string &creditCard);
 
     int uniqueID();
 
@@ -65,34 +65,34 @@ void CustomerManager::registerCustomer() {
 
         std::cout << "Enter your Username: ";
         std::cin >> newCustomer.userName;
-        if (usernameUnique(newCustomer.userName) && !isValidUsername(newCustomer.userName)) {
-            std::cerr << "\nInvalid Username! Must start with U, less than ten characters, followed by at most three numbers, and unique.";
+        if (!isUsernameUnique(newCustomer.userName) || !isValidUsername(newCustomer.userName)) {
+            std::cerr << "Invalid Username! Must start with U, less than ten characters, followed by at most three numbers, and unique.";
             break;
         }
         std::cout << "Enter your First Name: ";
         std::cin >> newCustomer.firstName;
         if (!isValidName(newCustomer.firstName)) {
             std::cerr
-                    << "\nInvalid Name! Must be less than twelve characters and not contain numbers or special characters.";
+                    << "Invalid Name! Must be less than twelve characters and not contain numbers or special characters.";
             break;
         }
         std::cout << "Enter your Last Name: ";
         std::cin >> newCustomer.lastName;
         if (!isValidName(newCustomer.firstName)) {
             std::cerr
-                    << "\nInvalid Name! Must be less than twelve characters and not contain numbers or special characters.";
+                    << "Invalid Name! Must be less than twelve characters and not contain numbers or special characters.";
             break;
         }
         std::cout << "Enter your Age: ";
         std::cin >> newCustomer.age;
         if (!isValidAge(newCustomer.age)) {
-            std::cerr << "\nInvalid Age! Must be in between 18 and 100 and not start with zero.";
+            std::cerr << "Invalid Age! Must be in between 18 and 100 and not start with zero.";
             break;
         }
         std::cout << "Enter your Credit Card Information: ";
         std::cin >> newCustomer.creditCard;
-        if (creditcardUnique(newCustomer.creditCard) && !isValidCreditCard(newCustomer.creditCard)) {
-            std::cerr << "\nInvalid Credit Card! Must be in xxxx-xxxx-xxxx format, cannot start with zero, \ndigits between zero and nine, and uniqe.";
+        if (!isCreditCardUnique(newCustomer.creditCard) || !isValidCreditCard(newCustomer.creditCard)) {
+            std::cerr << "Invalid Credit Card! Must be in xxxx-xxxx-xxxx format, cannot start with zero, \ndigits between zero and nine, and uniqe.";
             break;
         }
 
@@ -105,38 +105,38 @@ void CustomerManager::registerCustomer() {
 }
 
 /*
- * usernameUnique Function
+ * isUsernameUnique Function
  *
  * This function looks at each username in the vector and compares it to the username parameter, then returns true if
  * the username matches, then false if there is no match.
  */
 
-bool CustomerManager::usernameUnique(const std::string &username) {
+bool CustomerManager::isUsernameUnique(const std::string &username) {
     for (const auto &customer: customerVector) {
         if (customer.userName == username) {
-            return true;
+            return false;
         } else {
             continue;
         }
     }
-    return false;
+    return true;
 }
 
 /*
- * creditcardUnique Function
+ * isCreditCardUnique Function
  *
  * This function looks through each card in the vector and compares it to the credit card parameter, there returns true
  * if the card matches, then false if there is no match.
  */
-bool CustomerManager::creditcardUnique(const std::string &creditcard) {
-    for (const auto &customer: customerVector) {
-        if (customer.creditCard == creditcard) {
-            return true;
+bool CustomerManager::isCreditCardUnique(const std::string &creditCard) {
+    for (const Customer &customer: customerVector) {
+        if (customer.creditCard == creditCard) {
+            return false;
         } else {
             continue;
         }
     }
-    return false;
+    return true;
 }
 
 /*
@@ -147,20 +147,20 @@ bool CustomerManager::creditcardUnique(const std::string &creditcard) {
  * the process.
  */
 int CustomerManager::uniqueID() {
-    srand(time(0));
+    srand(time(nullptr));
     int id = rand() % (int(pow(10, 10)) - int(pow(10, 9))) + int(pow(10, 9));
     while (true) {
         if (customerVector.size() == 0) {
             return id;
         } else
-            for (const auto &customer: customerVector) {
+            for (const Customer &customer: customerVector) {
                 if (customer.id != id) {
                     return id;
                 } else {
                     continue;
                 }
             }
-        srand(time(0));
+        srand(time(nullptr));
         id = rand() % (int(pow(10, 10)) - int(pow(10, 9))) + int(pow(10, 9));
     }
 }
@@ -236,14 +236,14 @@ void CustomerManager::readCustomers() {
  * exist.
  */
 Customer CustomerManager::loginWithUsername(std::string username) {
-    for (const auto &account: customerVector) {
+    for (const Customer &account: customerVector) {
         if (account.userName == username) {
             return account;
         } else {
             continue;
         }
     }
-    std::cerr << "Account doesn't exits.";
+    throw;
 }
 
 /*
@@ -255,8 +255,8 @@ Customer CustomerManager::loginWithUsername(std::string username) {
  */
 
 void CustomerManager::outputUsernamesAndIDs() {
-    for (const auto &account: customerVector) {
-        std::cout << "Username: " << account.userName << " ID: " << account.id;
+    for (const Customer &account: customerVector) {
+        std::cout << "Username: " << account.userName << " ID: " << account.id << std::endl;
     }
 }
 /*
@@ -266,10 +266,10 @@ void CustomerManager::outputUsernamesAndIDs() {
  * users information
  */
 void CustomerManager::outputUserInfo(int id) {
-    if (customerVector.size() == 0) {
+    if (customerVector.empty()) {
         std::cerr << "There are no users.\n";
     } else {
-        for (const auto &account: customerVector) {
+        for (const Customer &account: customerVector) {
             if (id == account.id) {
                 std::cout << "Username: " << account.userName << "\nFirst Name: " << account.firstName << "\nLast Name: "
                 << account.lastName << "\nAge: " << account.age <<"\nCredit Card: " << account.creditCard << "\nReward Points: "

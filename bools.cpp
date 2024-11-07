@@ -27,7 +27,7 @@ bool isValidName(const std::string &name) {
         follows the specification requirements
 */
 bool isValidUsername(const std::string &username) {
-    if (username.length() < 10 || username[0] != 'U' || username[1] != '_') {
+    if (username.length() > 10 || username[0] != 'U' || username[1] != '_') {
         return false;
     } else {
         int digitCount = 0;

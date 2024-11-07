@@ -5,7 +5,7 @@
 #include <vector>
 
 struct Transaction {
-    std::string transactionID;         // Unique ID for each transaction
+    int transactionID;         // Unique ID for each transaction
     std::string userID;                // ID of the user making the transaction
     std::vector<std::string> productIDs; // List of product IDs purchased
     float totalAmount = 0.0f;          // Total amount of the transaction
