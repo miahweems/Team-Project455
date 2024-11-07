@@ -28,7 +28,6 @@ void mainMenu() {
     std::cout << "Enter your choice (1-4): ";
 
 }
-
 /*
     Return Type: Void
     No Params
@@ -44,9 +43,10 @@ void managerMenu() {
     std::cout << "===== 2. Product Addition =====" << std::endl;
     std::cout << "===== 3. Product Removal =====" << std::endl;
     std::cout << "===== 4. View Customer By ID =====" << std::endl;
-    std::cout << "===== 5. Exit =====" << std::endl;
+    std::cout << "===== 5. Assign Reward Points =====" << std::endl;
+    std::cout << "===== 6. Exit =====" << std::endl;
 
-    std::cout << "Enter your choice (1-5): ";
+    std::cout << "Enter your choice (1-6): ";
 }
 
 /*
@@ -60,6 +60,7 @@ bool managerTools(int managersChoice) {
     CustomerManager existingCustomer;
     ProductManager newProduct;
     ProductManager existingProduct;
+    float rewardPtPercentage;
     if (managersChoice == 1) {   //Customer Removal
                 int userIDtoRemove = 0;
                 existingCustomer.outputUsernamesAndIDs();
@@ -67,33 +68,35 @@ bool managerTools(int managersChoice) {
                 std::cin >> userIDtoRemove;
                 existingCustomer.removeCustomer(userIDtoRemove);
                 std::cout << "Customer Removed Successfully!" << std::endl;
-            }
-            else if (managersChoice == 2) { //Product Addition
-                newProduct.addProduct();
-            }
-            else if (managersChoice == 3) { //Product Removal
-                int prodIDtoRemove = 0;
-                std::cout << "Enter the ID of the product to be removed: ";
-                std::cin >> prodIDtoRemove;
-                existingProduct.removeProduct(prodIDtoRemove);
-                std::cout << "Product Removed Successfully!" << std::endl;
-            }
-             else if (managersChoice == 4) { //View Customer By ID
-                int userIDToFind = 0;
-                std::cout << "Enter the ID of the customer to be viewed: ";
-                std::cin >> userIDToFind;
-                existingCustomer.outputUserInfo(userIDToFind);
+    }
+    else if (managersChoice == 2) { //Product Addition
+        newProduct.addProduct();
+    }
+    else if (managersChoice == 3) { //Product Removal
+        int prodIDtoRemove = 0;
+        std::cout << "Enter the ID of the product to be removed: ";
+        std::cin >> prodIDtoRemove;
+        existingProduct.removeProduct(prodIDtoRemove);
+        std::cout << "Product Removed Successfully!" << std::endl;
+    }
+        else if (managersChoice == 4) { //View Customer By ID
+        int userIDToFind = 0;
+        std::cout << "Enter the ID of the customer to be viewed: ";
+        std::cin >> userIDToFind;
+        existingCustomer.outputUserInfo(userIDToFind);
 
-            }
-            
-            else if (managersChoice == 5) { // Exit
-                std::cout << "Exiting the Program. Goodbye!" << std::endl;
-                return 0;
-            }
-            else {
-                std::cout << "Invalid choice, please try again." << std::endl;
-            }
-            return 1;
+    }
+    else if (managersChoice == 5) {
+        //implement reward points calculator
+    }
+    else if (managersChoice == 6) { // Exit
+        std::cout << "Exiting the Program. Goodbye!" << std::endl;
+        return 0;
+    }
+    else {
+        std::cout << "Invalid choice, please try again." << std::endl;
+    }
+    return 1;
 }
 
 /*

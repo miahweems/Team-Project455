@@ -21,7 +21,6 @@ bool isValidName(const std::string &name) {
         return true;
     }
 }
-
 /* Return Type: Boolean
    Input Parameter: string
    Use: This function is used to validate whether the user's username
@@ -108,16 +107,36 @@ bool isPositive(int num) {
 }
 
 /* Return Type: Boolean
-   Input Parameter: int
-   Use: This function is used to validate user's selections
+   Input Parameter: string
+   Use: This function is used to validate user's entrance for price
    in the command line interface.
 */
-bool isValidSelection(const int &choice) {
+bool isValidProductPrice(const std::string &price) {
 
-    if (choice < 1 || choice > 9) {
-        return false;
+    bool decimalFound = false;
+    int decimalCount = 0; //counts digits after decimal encountered
+    if (!std::isdigit(price[0])) {
+        return false;      //checks that amount starts with a num ie: non negative
     }
+
     else {
-        return true;
+
+        for (int i = 1; i < price.length(); i++) {
+            if (std::isdigit(price[i])) {
+                if (decimalFound){
+                    ++decimalCount;
+                }
+                else {
+                continue; //checks if digit
+                }
+            }
+            else if (price[i] == '.' && !decimalFound) {
+                decimalFound = true;  //blocks user from using more than one decimal
+            }
+            else {
+                return false;
+            }
+        }
     }
+    return !decimalFound || decimalCount <= 2;
 }
