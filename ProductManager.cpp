@@ -67,19 +67,59 @@ void ProductManager::addProduct() {
             continue;
         }
 
-        // Generate unique Product ID
-        static int productIDCounter = 10000;  // Starting ID sequence
-        newProduct.productID = "Prod" + std::to_string(productIDCounter++);
-        if (!productIDUnique(newProduct.productID)) {
-            std::cerr << "\nGenerated Product ID is not unique. Please try again.";
-            continue;
-        }
+
+        newProduct.id = uniqueID();
 
         productVector.push_back(newProduct);
         saveProducts();
         break;
     }
 }
+
+/*
+ * uniqueID function
+ *
+ * this function creates a random number of 5 digits and checks if there are no other ids to compare to. If there is
+ * it loops through each id and sees if the id matches and returns the id. Else it creates and new one and restarts
+ * the process.
+ */
+int ProductManager::uniqueID() {
+    srand(time(nullptr));
+    int id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4)); // 5-digit ID range
+    while (true) {
+        if (productVector.size() == 0) {
+            return id;
+        } else
+            for (const Product &product: productVector) {
+                if (product.id != id) {
+                    return id;
+                } else {
+                    continue;
+                }
+            }
+        srand(time(nullptr));
+        id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4));
+    }
+}
+
+// int ProductManager::uniqueID() {
+//     srand(time(nullptr));  
+//     int id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4)); // 5-digit ID range
+//     while (true) {
+//         bool idExists = false;  
+//         for (const Product& product : productVector) {
+//             if (product.productID == id) {
+//                 idExists = true;  
+//                 break;
+//             }
+//         }
+//         if (!idExists) {
+//             return id;  // If the ID is unique, return it
+//         }
+//         id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4));
+//     }
+// }
+
 
 
 /*
