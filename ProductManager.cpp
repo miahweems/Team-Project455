@@ -1,17 +1,16 @@
-#ifndef PRODUCTMANAGER_H
-#define PRODUCTMANAGER_H
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include "Product.h"
+#include "bools.cpp"
 
 class ProductManager {
 private:
     std::ofstream outfile;
     std::ifstream infile;
     std::vector<Product> productVector;
+    std::vector<Product> productCart;
     const std::string TAB = "    ";
     const std::string PRODID_PREFIX = "Prod";
     const std::string FILE_NAME = "products.txt";
@@ -22,12 +21,17 @@ public:
 
     void addProduct();
     void saveProducts();
-    void removeProduct(std::string productID);
+    void removeProduct(int productID);
     void loadProducts();
+    int uniqueID();
+    void addProductToCart(int id);
+    void displayCart();
+    float totalPriceOfCart();
 };
 
 // Constructor
-ProductManager::ProductManager() {}
+ProductManager::ProductManager() {
+}
 
 // Destructor
 ProductManager::~ProductManager() {
@@ -46,29 +50,28 @@ void ProductManager::addProduct() {
         Product newProduct;
 
         std::cout << "Enter Product Name: ";
-        std::cin.ignore();
-        std::getline(std::cin, newProduct.productName);
-        if (!isValidProductName(newProduct.productName)) {
+        std::cin >> newProduct.productName;
+        if (!isValidName(newProduct.productName)) {
             std::cerr << "\nInvalid Product Name! Must be less than 20 characters and not contain special characters.";
             continue;
         }
 
-        std::cout << "Enter Product Price: ";
+        std::cout << "Enter Product Price: $";
         std::cin >> newProduct.productPrice;
-        if (!isValidProductPrice(newProduct.productPrice)) {
+        /*if (!isValidProductPrice(newProduct.productPrice)) {
             std::cerr << "\nInvalid Product Price! Must be a positive number.";
             continue;
         }
-
+*/
         std::cout << "Enter Product Stock: ";
         std::cin >> newProduct.productStock;
-        if (!isValidProductStock(newProduct.productStock)) {
+        if (!isPositive(newProduct.productStock)) {
             std::cerr << "\nInvalid Product Stock! Must be a positive integer.";
             continue;
         }
 
 
-        newProduct.id = uniqueID();
+        newProduct.productID = uniqueID();
 
         productVector.push_back(newProduct);
         saveProducts();
@@ -91,7 +94,7 @@ int ProductManager::uniqueID() {
             return id;
         } else
             for (const Product &product: productVector) {
-                if (product.id != id) {
+                if (product.productID != id) {
                     return id;
                 } else {
                     continue;
@@ -101,25 +104,6 @@ int ProductManager::uniqueID() {
         id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4));
     }
 }
-
-// int ProductManager::uniqueID() {
-//     srand(time(nullptr));  
-//     int id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4)); // 5-digit ID range
-//     while (true) {
-//         bool idExists = false;  
-//         for (const Product& product : productVector) {
-//             if (product.productID == id) {
-//                 idExists = true;  
-//                 break;
-//             }
-//         }
-//         if (!idExists) {
-//             return id;  // If the ID is unique, return it
-//         }
-//         id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4));
-//     }
-// }
-
 
 
 /*
@@ -149,7 +133,7 @@ void ProductManager::saveProducts() {
  * This function searches the product vector for a product with the specified ID and removes it.
  * It then calls saveProducts() to update the products file.
  */
-void ProductManager::removeProduct(std::string productID) {
+void ProductManager::removeProduct(int productID) {
     for (int i = 0; i < productVector.size(); ++i) {
         if (productVector[i].productID == productID) {
             productVector.erase(productVector.begin() + i);
@@ -157,6 +141,34 @@ void ProductManager::removeProduct(std::string productID) {
         }
     }
     saveProducts();
+}
+
+void ProductManager::addProductToCart(int id) {
+    for (const Product product : productVector) {
+        if (product.productID == id) {
+            productCart.push_back(product);
+        } else {
+            continue;
+        }
+    }
+}
+
+void ProductManager::displayCart() {
+    std::cout << "===== Cart =====" << std::endl;
+    for (const Product product : productCart) {
+         std::cout << product.productName << " $" << product.productPrice << std::endl;
+    }
+
+    std::cout << "================" << std::endl << "Total: " << totalPriceOfCart();
+}
+
+float ProductManager::totalPriceOfCart() {
+    float total = 0;
+    for (const Product product : productCart) {
+        total = total + std::stof(product.productPrice);
+    }
+    total = std::round(total * 100.f) / 100.f;
+    return total;
 }
 
 /*
@@ -173,11 +185,11 @@ void ProductManager::loadProducts() {
         if (line.find("product") != std::string::npos) {
             Product product;
             getline(infile, line);
-            product.productID = line.substr(TAB.length());
+            product.productID = std::stoi(line.substr(TAB.length()));
             getline(infile, line);
             product.productName = line.substr(TAB.length());
             getline(infile, line);
-            product.productPrice = std::stof(line.substr(TAB.length()));
+            product.productPrice = line.substr(TAB.length());
             getline(infile, line);
             product.productStock = std::stoi(line.substr(TAB.length()));
             tempProducts.push_back(product);
@@ -188,4 +200,3 @@ void ProductManager::loadProducts() {
     infile.close();
 }
 
-#endif

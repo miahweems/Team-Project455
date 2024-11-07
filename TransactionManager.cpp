@@ -1,5 +1,3 @@
-#ifndef TRANSACTIONMANAGER_H
-#define TRANSACTIONMANAGER_H
 
 #include <iostream>
 #include <fstream>
@@ -22,6 +20,7 @@ public:
     void addTransaction(const std::string& userID, const std::vector<std::string>& productIDs, float totalAmount, int rewardPoints);
     void saveTransactions();
     void loadTransactions();
+    int uniqueID();
 };
 
 // Constructor
@@ -41,9 +40,8 @@ TransactionManager::~TransactionManager() {
 void TransactionManager::addTransaction(const std::string& userID, const std::vector<std::string>& productIDs, float totalAmount, int rewardPoints) {
     Transaction newTransaction;
     
-    // Generate a unique transaction ID (e.g., "Trans100001")
-    static int transactionCounter = 100001;
-    newTransaction.transactionID = "Trans" + std::to_string(transactionCounter++);
+
+    newTransaction.transactionID = uniqueID();
     newTransaction.userID = userID;
     newTransaction.productIDs = productIDs;
     newTransaction.totalAmount = totalAmount;
@@ -51,6 +49,25 @@ void TransactionManager::addTransaction(const std::string& userID, const std::ve
 
     transactionVector.push_back(newTransaction);
     saveTransactions();
+}
+
+int TransactionManager::uniqueID() {
+    srand(time(nullptr));
+    int id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4)); // 5-digit ID range
+    while (true) {
+        if (transactionVector.size() == 0) {
+            return id;
+        } else
+            for (const Transaction &transaction: transactionVector) {
+                if (transaction.transactionID != id) {
+                    return id;
+                } else {
+                    continue;
+                }
+            }
+        srand(time(nullptr));
+        id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4));
+    }
 }
 
 /*
@@ -64,7 +81,7 @@ void TransactionManager::saveTransactions() {
     for (const Transaction& transaction : transactionVector) {
         if (outfile.is_open()) {
             outfile << "Transaction " << count++ << std::endl;
-            outfile << TAB << transaction.transactionID << std::endl;
+            outfile << TAB <<transaction.transactionID << std::endl;
             outfile << TAB << transaction.userID << std::endl;
 
             outfile << TAB << "Products: ";
@@ -119,4 +136,3 @@ void TransactionManager::loadTransactions() {
     infile.close();
 }
 
-#endif // TRANSACTIONMANAGER_H
