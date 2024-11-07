@@ -22,7 +22,7 @@ public:
 
     void addProduct();
     void saveProducts();
-    void removeProduct(int productID);
+    void removeProduct(std::string productID);
     void loadProducts();
 };
 
@@ -109,7 +109,7 @@ void ProductManager::saveProducts() {
  * This function searches the product vector for a product with the specified ID and removes it.
  * It then calls saveProducts() to update the products file.
  */
-void ProductManager::removeProduct(int productID) {
+void ProductManager::removeProduct(std::string productID) {
     for (int i = 0; i < productVector.size(); ++i) {
         if (productVector[i].productID == productID) {
             productVector.erase(productVector.begin() + i);
