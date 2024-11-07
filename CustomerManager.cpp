@@ -299,7 +299,3 @@ void CustomerManager::removeCustomer(int id) {
     }
     saveCustomers();
 }
-
-int main() {
-    CustomerManager();
-}
