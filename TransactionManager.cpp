@@ -1,9 +1,11 @@
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cmath>
 #include "Transaction.h"
+#include "ProductManager"
+#include "Product.h"
 
 class TransactionManager {
 private:
@@ -17,7 +19,7 @@ public:
     TransactionManager();
     ~TransactionManager();
 
-    void addTransaction(const std::string& userID, const std::vector<std::string>& productIDs, float totalAmount, int rewardPoints);
+    void addTransaction(const int userID, const std::vector<int>& productIDs, float totalAmount, int rewardPoints);
     void saveTransactions();
     void loadTransactions();
     int uniqueID();
@@ -37,9 +39,8 @@ TransactionManager::~TransactionManager() {
  * Adds a new transaction with details provided and assigns a unique transaction ID.
  * Appends it to the transaction vector and then calls saveTransactions() to save it to a file.
  */
-void TransactionManager::addTransaction(const std::string& userID, const std::vector<std::string>& productIDs, float totalAmount, int rewardPoints) {
+void TransactionManager::addTransaction(const int userID, const std::vector<int>& productIDs, float totalAmount, int rewardPoints) {
     Transaction newTransaction;
-    
 
     newTransaction.transactionID = uniqueID();
     newTransaction.userID = userID;
@@ -55,7 +56,7 @@ int TransactionManager::uniqueID() {
     srand(time(nullptr));
     int id = rand() % (int(pow(10, 5)) - int(pow(10, 4))) + int(pow(10, 4)); // 5-digit ID range
     while (true) {
-        if (transactionVector.size() == 0) {
+        if (transactionVector.empty()) {
             return id;
         } else
             for (const Transaction &transaction: transactionVector) {
@@ -78,6 +79,7 @@ int TransactionManager::uniqueID() {
 void TransactionManager::saveTransactions() {
     outfile.open(FILE_NAME);
     int count = 1;
+    int productCount = 1;
     for (const Transaction& transaction : transactionVector) {
         if (outfile.is_open()) {
             outfile << "Transaction " << count++ << std::endl;
@@ -85,13 +87,16 @@ void TransactionManager::saveTransactions() {
             outfile << TAB << transaction.userID << std::endl;
 
             outfile << TAB << "Products: ";
-            for (const auto& productID : transaction.productIDs) {
-                outfile << productID << " ";
+            for (const int &id : transaction.productIDs) {
+                outfile << "Product " << productCount << " " << id << " ";
             }
             outfile << std::endl;
 
             outfile << TAB << "Total Amount: " << transaction.totalAmount << std::endl;
             outfile << TAB << "Reward Points: " << transaction.rewardPoints << std::endl;
+
+            ++count;
+            ++productCount
         }
     }
     outfile.close();
@@ -111,13 +116,13 @@ void TransactionManager::loadTransactions() {
         if (line.find("Transaction") != std::string::npos) {
             Transaction transaction;
             getline(infile, line);
-            transaction.transactionID = line.substr(TAB.length());
+            transaction.transactionID = stoi(line.substr(TAB.length()));
             getline(infile, line);
-            transaction.userID = line.substr(TAB.length());
+            transaction.userID = stoi(line.substr(TAB.length()));
 
             getline(infile, line);
             std::string productsLine = line.substr(TAB.length() + 10);  // Skip "Products: "
-            std::istringstream productStream(productsLine);
+            std::istringstream productStream(productsLine);//Parse by spaces and length of each iteration
             std::string productID;
             while (productStream >> productID) {
                 transaction.productIDs.push_back(productID);

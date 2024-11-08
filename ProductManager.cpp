@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include "Product.h"
+#include "Transaction.h"
+#include "TransactionManager.cpp"
 #include "bools.cpp"
 
 class ProductManager {
@@ -24,9 +26,14 @@ public:
     void removeProduct(int productID);
     void loadProducts();
     int uniqueID();
+    void displayAvalibleProducts();
+    void addProductToCart(std::string availableProducts);
     void addProductToCart(int id);
+    std::vector<int> gatherCartIDs();
     void displayCart();
+    void removeFromCart(std::string removedProduct);
     float totalPriceOfCart();
+    void purchase();
 };
 
 // Constructor
@@ -58,11 +65,11 @@ void ProductManager::addProduct() {
 
         std::cout << "Enter Product Price: $";
         std::cin >> newProduct.productPrice;
-        /*if (!isValidProductPrice(newProduct.productPrice)) {
+        if (!isValidProductPrice(newProduct.productPrice)) {
             std::cerr << "\nInvalid Product Price! Must be a positive number.";
             continue;
         }
-*/
+
         std::cout << "Enter Product Stock: ";
         std::cin >> newProduct.productStock;
         if (!isPositive(newProduct.productStock)) {
@@ -142,33 +149,118 @@ void ProductManager::removeProduct(int productID) {
     }
     saveProducts();
 }
+/*
+ * displayAvaliableProducts Function
+ *
+ * This fucnction displays all available products by setting itself to the productVector and erasing all the products that
+ * have no stock left in inventory. Then displays them by product, price, and quantity left.
+ */
+void ProductManager::displayAvalibleProducts() {
+    std::vector<Product> availableProducts = productVector;
+    for (int i = 0; i < productVector.size(); ++i) {
+        if (productVector[i].productStock == 0) {
+            availableProducts.erase(availableProducts.begin() + i);
+        } else {
+            continue;
+        }
+    }
+    std::cout << "====== Inventory ======" << std::endl;
+    for (Product &product : availableProducts) {
+        std::cout << product.productName << "   $" << product.productPrice << "    " << product.productStock << " left" << std::endl;
+    }
+}
+/*
+ * addProductToCart function
+ *
+ * This function sees if the user puts in a product that is out of stock that might still be inside the productVector
+ * and returns that it is out of stock. If not it will push the product that they want to purchase in the productCart vector.
+ */
 
-void ProductManager::addProductToCart(int id) {
-    for (const Product product : productVector) {
-        if (product.productID == id) {
+void ProductManager::addProductToCart(std::string availableProducts) {
+    for (const Product &product : productVector) {
+        if (product.productStock == 0) {
+            std::cerr << product.productName << " is out of stock!" << std::endl;
+            break;
+        } else if (product.productName == availableProducts) {
             productCart.push_back(product);
         } else {
             continue;
         }
     }
 }
-
+/*
+ * displayCart
+ *
+ * This function looks at the productCart vector and displays each item the user has chosen to possibly purchase and the total price
+ * of everything they want
+ */
 void ProductManager::displayCart() {
     std::cout << "===== Cart =====" << std::endl;
-    for (const Product product : productCart) {
-         std::cout << product.productName << " $" << product.productPrice << std::endl;
+    for (const Product &product : productCart) {
+         std::cout << product.productName << " " << product.productPrice << std::endl;
     }
 
-    std::cout << "================" << std::endl << "Total: " << totalPriceOfCart();
+    std::cout << "================" << std::endl << "Total: $" << totalPriceOfCart();
 }
+/*
+ * removeFromCart Fucntion
+ *
+ * This fuction takes a string of product that you want to remove from your cart and removes it from the productCart vector
+ *
+ */
+void ProductManager::removeFromCart(std::string removedProduct) {
+    for (int i = 0; i < productCart.size(); ++i) {
+        if (productCart[i].productName == removedProduct) {
+            productCart.erase(productCart.begin() + i);
+            std::cout << "removed " << productCart[i].productName << " from cart" << std::endl;
+            break;
+        } else {
+            continue;
+        }
+    }
 
+}
+/*
+ * totalPriceOfCart Function
+ *
+ * This look are each price of each product in the productCart vector and adds it up to find the total of
+ * everything combined.
+ */
 float ProductManager::totalPriceOfCart() {
     float total = 0;
-    for (const Product product : productCart) {
+    for (const Product &product : productCart) {
         total = total + std::stof(product.productPrice);
     }
     total = std::round(total * 100.f) / 100.f;
     return total;
+}
+/*
+ * gatherCartIDs Function
+ *
+ * This function finds all id in each product in the productCart. Used to add to a transaction report.
+ */
+std::vector<int> ProductManager::gatherCartIDs() {
+    std::vector<int> transactionIDs;
+    for (const Product &purchase : productCart) {
+        transactionIDs.push_back(purchase.productID);
+    }
+}
+/*
+ * purchase Function
+ *
+ * This looks at each product and subtracts one quantity from the products stock and saves the products updated info
+ */
+void ProductManager::purchase() {
+    for (const Product &boughtProduct : productCart) {
+        for (int i = 0; i < productVector.size(); ++i) {
+            if (productVector[i].productName == boughtProduct.productName) {
+                productVector[i].productStock--;
+            } else {
+                continue;
+            }
+        }
+    }
+    saveProducts();
 }
 
 /*
