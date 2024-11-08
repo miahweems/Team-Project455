@@ -4,7 +4,6 @@
 #include <vector>
 #include <cmath>
 #include "Transaction.h"
-#include "ProductManager"
 #include "Product.h"
 
 class TransactionManager {
@@ -96,7 +95,7 @@ void TransactionManager::saveTransactions() {
             outfile << TAB << "Reward Points: " << transaction.rewardPoints << std::endl;
 
             ++count;
-            ++productCount
+            ++productCount;
         }
     }
     outfile.close();

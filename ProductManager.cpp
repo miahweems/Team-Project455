@@ -3,8 +3,6 @@
 #include <string>
 #include <vector>
 #include "Product.h"
-#include "Transaction.h"
-#include "TransactionManager.cpp"
 #include "bools.cpp"
 
 class ProductManager {
