@@ -32,6 +32,10 @@ public:
     void removeFromCart(std::string removedProduct);
     float totalPriceOfCart();
     void purchase();
+    bool isValidProductName(const std::string &productName);
+    bool isValidProductPrice(float productPrice);
+    bool isValidProductStock(float productStock);
+    bool productIDUnique(const std::string &productID);
 };
 
 // Constructor
