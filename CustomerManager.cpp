@@ -15,6 +15,13 @@ private:
     const std::string TAB = "    ";
     const std::string CUSTID = "CustID";
     const std::string FILE_NAME = "registered.txt";
+    const std::string USERNAME = "Username: ";
+    const std::string FIRST = "Name: ";
+    const std::string LAST = "Last Name: ";
+    const std::string AGE = "Age: ";
+    const std::string CRDTCRD = "Credit Card: ";
+    const std::string REWARDPTS = "Reward Points: ";
+
 public:
     CustomerManager(/* args */);
 
@@ -66,7 +73,8 @@ void CustomerManager::registerCustomer() {
         std::cout << "Enter your Username: ";
         std::cin >> newCustomer.userName;
         if (!isUsernameUnique(newCustomer.userName) || !isValidUsername(newCustomer.userName)) {
-            std::cerr << "Invalid Username! Must start with U, less than ten characters, followed by at most three numbers, and unique.";
+            std::cerr
+                    << "Invalid Username! Must start with U, less than ten characters, followed by at most three numbers, and unique.";
             break;
         }
         std::cout << "Enter your First Name: ";
@@ -92,7 +100,8 @@ void CustomerManager::registerCustomer() {
         std::cout << "Enter your Credit Card Information: ";
         std::cin >> newCustomer.creditCard;
         if (!isCreditCardUnique(newCustomer.creditCard) || !isValidCreditCard(newCustomer.creditCard)) {
-            std::cerr << "Invalid Credit Card! Must be in xxxx-xxxx-xxxx format, cannot start with zero, \ndigits between zero and nine, and uniqe.";
+            std::cerr
+                    << "Invalid Credit Card! Must be in xxxx-xxxx-xxxx format, cannot start with zero, \ndigits between zero and nine, and uniqe.";
             break;
         }
 
@@ -180,12 +189,12 @@ void CustomerManager::saveCustomers() {
         if (outfile.is_open()) {
             outfile << "customer " << count << std::endl;
             outfile << TAB + "CustID" << customer.id << std::endl;
-            outfile << TAB << customer.userName << std::endl;
-            outfile << TAB << customer.firstName << std::endl;
-            outfile << TAB << customer.lastName << std::endl;
-            outfile << TAB << customer.age << std::endl;
-            outfile << TAB << customer.creditCard << std::endl;
-            outfile << TAB << customer.rewardPoints << std::endl;
+            outfile << TAB << USERNAME << customer.userName << std::endl;
+            outfile << TAB << FIRST << customer.firstName << std::endl;
+            outfile << TAB << LAST << customer.lastName << std::endl;
+            outfile << TAB << AGE << customer.age << std::endl;
+            outfile << TAB << CRDTCRD << customer.creditCard << std::endl;
+            outfile << TAB << REWARDPTS << customer.rewardPoints << std::endl;
 
             ++count;
         }
@@ -209,17 +218,17 @@ void CustomerManager::readCustomers() {
             getline(readfile, line);
             customer.id = std::stoi(line.substr(TAB.length() + CUSTID.length()));
             getline(readfile, line);
-            customer.userName = line.substr(TAB.length());
+            customer.userName = line.substr(TAB.length() + USERNAME.length());
             getline(readfile, line);
-            customer.firstName = line.substr(TAB.length());
+            customer.firstName = line.substr(TAB.length() + FIRST.length());
             getline(readfile, line);
-            customer.lastName = line.substr(TAB.length());
+            customer.lastName = line.substr(TAB.length() + LAST.length());
             getline(readfile, line);
-            customer.age = line.substr(TAB.length());
+            customer.age = line.substr(TAB.length() + AGE.length());
             getline(readfile, line);
-            customer.creditCard = line.substr(TAB.length());
+            customer.creditCard = line.substr(TAB.length() + CRDTCRD.length());
             getline(readfile, line);
-            customer.rewardPoints = std::stoi(line.substr(TAB.length()));
+            customer.rewardPoints = std::stoi(line.substr(TAB.length() + REWARDPTS.length()));
             tempCustomers.push_back(customer);
         }
     }
@@ -259,6 +268,7 @@ void CustomerManager::outputUsernamesAndIDs() {
         std::cout << "Username: " << account.userName << " ID: " << account.id << std::endl;
     }
 }
+
 /*
  * outputUserInfo
  *
@@ -271,9 +281,11 @@ void CustomerManager::outputUserInfo(int id) {
     } else {
         for (const Customer &account: customerVector) {
             if (id == account.id) {
-                std::cout << "Username: " << account.userName << "\nFirst Name: " << account.firstName << "\nLast Name: "
-                << account.lastName << "\nAge: " << account.age <<"\nCredit Card: " << account.creditCard << "\nReward Points: "
-                << account.rewardPoints << "\nID: " << account.id;
+                std::cout << "Username: " << account.userName << "\nFirst Name: " << account.firstName
+                          << "\nLast Name: "
+                          << account.lastName << "\nAge: " << account.age << "\nCredit Card: " << account.creditCard
+                          << "\nReward Points: "
+                          << account.rewardPoints << "\nID: " << account.id;
             } else {
                 continue;
             }

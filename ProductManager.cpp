@@ -14,28 +14,49 @@ private:
     const std::string TAB = "    ";
     const std::string PRODID_PREFIX = "Prod";
     const std::string FILE_NAME = "products.txt";
+    const std::string PRODID = "Product ID: ";
+    const std::string PRODNAME = "Product Name: ";
+    const std::string PRODPRICE = "Product Price: $";
+    const std::string PRODSTOCK = "Product Stock: ";
 
 public:
     ProductManager();
+
     ~ProductManager();
 
     void addProduct();
+
     void saveProducts();
+
     void removeProduct(int productID);
+
     void loadProducts();
+
+    void outputProducts();
+
     int uniqueID();
+
     void displayAvalibleProducts();
+
     void addProductToCart(std::string availableProducts);
+
     void addProductToCart(int id);
+
     std::vector<int> gatherCartIDs();
+
     void displayCart();
+
     void removeFromCart(std::string removedProduct);
+
     float totalPriceOfCart();
+
     void purchase();
 };
 
 // Constructor
 ProductManager::ProductManager() {
+    loadProducts();
+    outputProducts();
 }
 
 // Destructor
@@ -120,16 +141,28 @@ int ProductManager::uniqueID() {
 void ProductManager::saveProducts() {
     outfile.open(FILE_NAME);
     int count = 1;
-    for (const Product& product : productVector) {
+    for (const Product &product: productVector) {
         if (outfile.is_open()) {
             outfile << "product " << count++ << std::endl;
-            outfile << TAB << product.productID << std::endl;
-            outfile << TAB << product.productName << std::endl;
-            outfile << TAB << product.productPrice << std::endl;
-            outfile << TAB << product.productStock << std::endl;
+            outfile << TAB << PRODID << product.productID << std::endl;
+            outfile << TAB << PRODNAME << product.productName << std::endl;
+            outfile << TAB << PRODPRICE << product.productPrice << std::endl;
+            outfile << TAB << PRODSTOCK << product.productStock << std::endl;
         }
     }
     outfile.close();
+}
+
+void ProductManager::outputProducts() {
+    int productCount = 1;
+    for (const Product &product: productVector) {
+        std::cout << "product " << productCount << std::endl;
+        std::cout << TAB << PRODID << product.productID << std::endl;
+        std::cout << TAB << PRODNAME << product.productName << std::endl;
+        std::cout << TAB << PRODPRICE << product.productPrice << std::endl;
+        std::cout << TAB << PRODSTOCK << product.productStock << std::endl;
+        ++productCount;
+    }
 }
 
 /*
@@ -147,6 +180,7 @@ void ProductManager::removeProduct(int productID) {
     }
     saveProducts();
 }
+
 /*
  * displayAvaliableProducts Function
  *
@@ -163,10 +197,12 @@ void ProductManager::displayAvalibleProducts() {
         }
     }
     std::cout << "====== Inventory ======" << std::endl;
-    for (Product &product : availableProducts) {
-        std::cout << product.productName << "   $" << product.productPrice << "    " << product.productStock << " left" << std::endl;
+    for (Product &product: availableProducts) {
+        std::cout << product.productName << "   $" << product.productPrice << "    " << product.productStock << " left"
+                  << std::endl;
     }
 }
+
 /*
  * addProductToCart function
  *
@@ -175,7 +211,7 @@ void ProductManager::displayAvalibleProducts() {
  */
 
 void ProductManager::addProductToCart(std::string availableProducts) {
-    for (const Product &product : productVector) {
+    for (const Product &product: productVector) {
         if (product.productStock == 0) {
             std::cerr << product.productName << " is out of stock!" << std::endl;
             break;
@@ -186,6 +222,7 @@ void ProductManager::addProductToCart(std::string availableProducts) {
         }
     }
 }
+
 /*
  * displayCart
  *
@@ -194,12 +231,13 @@ void ProductManager::addProductToCart(std::string availableProducts) {
  */
 void ProductManager::displayCart() {
     std::cout << "===== Cart =====" << std::endl;
-    for (const Product &product : productCart) {
-         std::cout << product.productName << " " << product.productPrice << std::endl;
+    for (const Product &product: productCart) {
+        std::cout << product.productName << " " << product.productPrice << std::endl;
     }
 
     std::cout << "================" << std::endl << "Total: $" << totalPriceOfCart();
 }
+
 /*
  * removeFromCart Fucntion
  *
@@ -218,6 +256,7 @@ void ProductManager::removeFromCart(std::string removedProduct) {
     }
 
 }
+
 /*
  * totalPriceOfCart Function
  *
@@ -226,12 +265,13 @@ void ProductManager::removeFromCart(std::string removedProduct) {
  */
 float ProductManager::totalPriceOfCart() {
     float total = 0;
-    for (const Product &product : productCart) {
+    for (const Product &product: productCart) {
         total = total + std::stof(product.productPrice);
     }
     total = std::round(total * 100.f) / 100.f;
     return total;
 }
+
 /*
  * gatherCartIDs Function
  *
@@ -239,17 +279,20 @@ float ProductManager::totalPriceOfCart() {
  */
 std::vector<int> ProductManager::gatherCartIDs() {
     std::vector<int> transactionIDs;
-    for (const Product &purchase : productCart) {
+    for (const Product &purchase: productCart) {
         transactionIDs.push_back(purchase.productID);
     }
+    return transactionIDs;
+    return transactionIDs;
 }
+
 /*
  * purchase Function
  *
  * This looks at each product and subtracts one quantity from the products stock and saves the products updated info
  */
 void ProductManager::purchase() {
-    for (const Product &boughtProduct : productCart) {
+    for (const Product &boughtProduct: productCart) {
         for (int i = 0; i < productVector.size(); ++i) {
             if (productVector[i].productName == boughtProduct.productName) {
                 productVector[i].productStock--;
@@ -275,13 +318,13 @@ void ProductManager::loadProducts() {
         if (line.find("product") != std::string::npos) {
             Product product;
             getline(infile, line);
-            product.productID = std::stoi(line.substr(TAB.length()));
+            product.productID = std::stoi(line.substr(TAB.length() + PRODID.length()));
             getline(infile, line);
-            product.productName = line.substr(TAB.length());
+            product.productName = line.substr(TAB.length() + PRODNAME.length());
             getline(infile, line);
-            product.productPrice = line.substr(TAB.length());
+            product.productPrice = line.substr(TAB.length() + PRODPRICE.length());
             getline(infile, line);
-            product.productStock = std::stoi(line.substr(TAB.length()));
+            product.productStock = std::stoi(line.substr(TAB.length() + PRODSTOCK.length()));
             tempProducts.push_back(product);
         }
     }
@@ -290,3 +333,6 @@ void ProductManager::loadProducts() {
     infile.close();
 }
 
+int main() {
+    ProductManager();
+}
