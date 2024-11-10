@@ -283,7 +283,6 @@ std::vector<int> ProductManager::gatherCartIDs() {
         transactionIDs.push_back(purchase.productID);
     }
     return transactionIDs;
-    return transactionIDs;
 }
 
 /*
