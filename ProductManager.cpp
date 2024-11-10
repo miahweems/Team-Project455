@@ -55,8 +55,6 @@ public:
 
 // Constructor
 ProductManager::ProductManager() {
-    loadProducts();
-    outputProducts();
 }
 
 // Destructor
@@ -330,8 +328,4 @@ void ProductManager::loadProducts() {
 
     productVector = tempProducts;
     infile.close();
-}
-
-int main() {
-    ProductManager();
 }
