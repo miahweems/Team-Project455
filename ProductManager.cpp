@@ -11,6 +11,7 @@ private:
     std::ifstream infile;
     std::vector<Product> productVector;
     std::vector<Product> productCart;
+    float rewardPercent = .1;
     const std::string TAB = "    ";
     const std::string PRODID_PREFIX = "Prod";
     const std::string FILE_NAME = "products.txt";
@@ -49,6 +50,8 @@ public:
     void removeFromCart(std::string removedProduct);
 
     float totalPriceOfCart();
+
+    float setRewardPercent(float percent);
 
     void purchase();
 };
@@ -281,6 +284,16 @@ std::vector<int> ProductManager::gatherCartIDs() {
         transactionIDs.push_back(purchase.productID);
     }
     return transactionIDs;
+}
+
+/*
+ * setRewardPercent Function
+ *
+ * This function sets the reward percent this is already defined as a default 10%
+ */
+float ProductManager::setRewardPercent(float percent) {
+    percent = percent / 100;
+    rewardPercent = percent;
 }
 
 /*
