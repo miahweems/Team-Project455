@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "Product.h"
+#include "Customer.h"
 #include "bools.cpp"
 
 class ProductManager {
@@ -52,6 +53,10 @@ public:
     float totalPriceOfCart();
 
     float setRewardPercent(float percent);
+
+    int rewardPointsPurchase(int customerRewardPts);
+
+    int recivePoints();
 
     void purchase();
 };
@@ -312,6 +317,35 @@ void ProductManager::purchase() {
         }
     }
     saveProducts();
+}
+
+/*
+ * rewardPointsPurchase Function
+ *
+ * This function returns the amount of points left over after a purchase with reward points. Assuming that the manager
+ * doesn't mind the lost of cents from purchasing with points.
+ */
+
+int ProductManager::rewardPointsPurchase(int customerRewardPts) {
+    int total = totalPriceOfCart();
+    int remainingPts;
+    if (total > customerRewardPts) {
+        std::cerr << "Not enough reward points!" << std::endl;
+    } else {
+        remainingPts = customerRewardPts - total;
+        return remainingPts;
+    }
+}
+
+/*
+ * receivePoints Function
+ *
+ * This fucntion returns the integer of points that are awarded from a purchase
+ */
+int ProductManager::recivePoints() {
+    int total = totalPriceOfCart();
+    int points = total * rewardPercent;
+    return points;
 }
 
 /*
