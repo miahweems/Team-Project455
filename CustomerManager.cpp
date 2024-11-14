@@ -50,6 +50,7 @@ public:
 
 //Class init
 CustomerManager::CustomerManager(/* args */) {
+    readCustomers();
 }
 
 //Destructor
@@ -252,7 +253,6 @@ Customer CustomerManager::loginWithUsername(std::string username) {
             continue;
         }
     }
-    throw;
 }
 
 /*
