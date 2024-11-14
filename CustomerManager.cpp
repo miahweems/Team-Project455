@@ -253,6 +253,7 @@ Customer CustomerManager::loginWithUsername(std::string username) {
             continue;
         }
     }
+    throw std::invalid_argument("No user found.");
 }
 
 /*
