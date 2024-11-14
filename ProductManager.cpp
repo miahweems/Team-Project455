@@ -4,7 +4,7 @@
 #include <vector>
 #include "Product.h"
 #include "Customer.h"
-#include "bools.cpp"
+#include "bools.h"
 
 class ProductManager {
 private:
@@ -84,22 +84,22 @@ void ProductManager::addProduct() {
         std::cout << "Enter Product Name: ";
         std::cin >> newProduct.productName;
         if (!isValidName(newProduct.productName)) {
-            std::cerr << "\nInvalid Product Name! Must be less than 20 characters and not contain special characters.";
-            continue;
+            std::cout << "Invalid Product Name! Must be less than 20 characters and not contain special characters." << std::endl;
+            break;
         }
 
         std::cout << "Enter Product Price: $";
         std::cin >> newProduct.productPrice;
         if (!isValidProductPrice(newProduct.productPrice)) {
-            std::cerr << "\nInvalid Product Price! Must be a positive number.";
-            continue;
+            std::cout << "Invalid Product Price! Must be a positive number." << std::endl;
+            break;
         }
 
         std::cout << "Enter Product Stock: ";
         std::cin >> newProduct.productStock;
         if (!isPositive(newProduct.productStock)) {
-            std::cerr << "\nInvalid Product Stock! Must be a positive integer.";
-            continue;
+            std::cout << "Invalid Product Stock! Must be a positive integer." << std::endl;
+            break;
         }
 
 

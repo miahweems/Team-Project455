@@ -1,3 +1,6 @@
+#ifndef  BOOLS_H
+#define BOOLS_H
+
 #include <string>
 #include <cctype>
 
@@ -140,3 +143,5 @@ bool isValidProductPrice(const std::string &price) {
     }
     return !decimalFound || decimalCount <= 2;
 }
+
+#endif
