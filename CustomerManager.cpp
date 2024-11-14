@@ -5,7 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include "Customer.h"
-#include "bools.cpp"
+#include "bools.h"
 
 class CustomerManager {
 private:
@@ -73,35 +73,35 @@ void CustomerManager::registerCustomer() {
         std::cout << "Enter your Username: ";
         std::cin >> newCustomer.userName;
         if (!isUsernameUnique(newCustomer.userName) || !isValidUsername(newCustomer.userName)) {
-            std::cerr
-                    << "Invalid Username! Must start with U, less than ten characters, followed by at most three numbers, and unique.";
+            std::cout
+                    << "Invalid Username! Must start with U, less than ten characters, followed by at most three numbers, and unique." << std::endl;
             break;
         }
         std::cout << "Enter your First Name: ";
         std::cin >> newCustomer.firstName;
         if (!isValidName(newCustomer.firstName)) {
-            std::cerr
-                    << "Invalid Name! Must be less than twelve characters and not contain numbers or special characters.";
+            std::cout
+                    << "Invalid Name! Must be less than twelve characters and not contain numbers or special characters." << std::endl;
             break;
         }
         std::cout << "Enter your Last Name: ";
         std::cin >> newCustomer.lastName;
         if (!isValidName(newCustomer.firstName)) {
-            std::cerr
-                    << "Invalid Name! Must be less than twelve characters and not contain numbers or special characters.";
+            std::cout
+                    << "Invalid Name! Must be less than twelve characters and not contain numbers or special characters." << std::endl;
             break;
         }
         std::cout << "Enter your Age: ";
         std::cin >> newCustomer.age;
         if (!isValidAge(newCustomer.age)) {
-            std::cerr << "Invalid Age! Must be in between 18 and 100 and not start with zero.";
+            std::cout << "Invalid Age! Must be in between 18 and 100 and not start with zero." << std::endl;
             break;
         }
         std::cout << "Enter your Credit Card Information: ";
         std::cin >> newCustomer.creditCard;
         if (!isCreditCardUnique(newCustomer.creditCard) || !isValidCreditCard(newCustomer.creditCard)) {
-            std::cerr
-                    << "Invalid Credit Card! Must be in xxxx-xxxx-xxxx format, cannot start with zero, \ndigits between zero and nine, and uniqe.";
+            std::cout
+                    << "Invalid Credit Card! Must be in xxxx-xxxx-xxxx format, cannot start with zero, \ndigits between zero and nine, and uniqe." << std::endl;
             break;
         }
 

@@ -6,7 +6,6 @@
 #include "ProductManager.cpp"
 #include "Transaction.h"
 #include "TransactionManager.cpp"
-#include "bools.cpp"
 
 /*
     Return Type: Void
@@ -144,7 +143,7 @@ bool userTools(int userChoice)
 }
 
 
-int main() 
+int main()
 {
     int choice = 0; //users choice for CLI
     int managersChoice = 0; //managers choice for CLI
