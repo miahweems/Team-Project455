@@ -190,16 +190,15 @@ bool userTools(int userChoice, ProductManager &productManager, TransactionManage
 
 int main()
 {
+    CustomerManager customerManager = CustomerManager();
+    ProductManager productManager = ProductManager();
+    TransactionManager transactionManager = TransactionManager();
+    Customer user;
     int choice = 0; //users choice for CLI
     int managersChoice = 0; //managers choice for CLI
     int userChoice = 0; //choice for user menu
-    CustomerManager newCustomer;  //instance of customermanager class
-    CustomerManager existingCustomer; //instance of customermanager class
-    ProductManager newProduct; //instance of productmanager class
-    ProductManager existingProduct; //instance of productmanager class
-    Customer customer; //customer object
     std::string usernameEntered; //string var to hold the username entered by the user
-    while(1) 
+    while(true)
     {
         mainMenu();
         std::cin >> choice;
@@ -212,17 +211,20 @@ int main()
         }
         
         else if (choice == 2) {
-            std::cout << "Enter Your Username: " << std::endl;
-            std::cin >> usernameEntered; 
-            existingCustomer.loginWithUsername(usernameEntered);
-            std::cout << "Logged in as " << usernameEntered << std::endl;
-            userMenu();
-            std::cin >> userChoice;
-            
+            std::cout << "Enter Your Username: ";
+            std::cin >> usernameEntered;
+            try {
+                user = customerManager.loginWithUsername(usernameEntered);
+                std::cout << "Logged in as " << usernameEntered << std::endl;
+                userMenu();
+                std::cin >> userChoice;
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << std::endl;
+            }
         }
         
         else if (choice == 3) {
-            newCustomer.registerCustomer();
+            customerManager.registerCustomer();
         }
         
         else if (choice == 4) {
