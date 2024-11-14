@@ -40,6 +40,7 @@ public:
 
 // Constructor
 TransactionManager::TransactionManager() {
+    loadTransactions();
 }
 
 // Destructor
