@@ -124,10 +124,55 @@ void userMenu()
          
     Return's 0 when commanded to break out of the loop, otherwise returns 1
 */
-bool userTools(int userChoice)
+bool userTools(int userChoice, ProductManager &productManager, TransactionManager &transactionManager, int userID)
 {
-    if (userChoice == 1){
-        //Implement way for user to "shop"
+    if (userChoice == 1) // Shopping
+    {
+        std::string productName;
+        int addMore = 1;
+
+        // Display available products
+        std::cout << "===== Available Products =====" << std::endl;
+        productManager.displayAvalibleProducts();
+
+        // Add products to cart
+        while (addMore == 1)
+        {
+            std::cout << "Enter the name of the product to add to cart: ";
+            std::cin >> productName;
+            productManager.addProductToCart(productName);
+
+            std::cout << "Do you want to add more products? (1 for Yes, 0 for No): ";
+            std::cin >> addMore;
+        }
+
+        // Display cart contents and total
+        std::cout << "===== Your Cart =====" << std::endl;
+        productManager.displayCart();
+
+        // Confirm and complete the purchase
+        int confirmPurchase;
+        std::cout << "Do you want to complete the purchase? (1 for Yes, 0 for No): ";
+        std::cin >> confirmPurchase;
+
+        if (confirmPurchase == 1)
+        {
+            float totalAmount = productManager.totalPriceOfCart();
+            int rewardPoints = productManager.recivePoints(); // Calculate reward points
+            std::vector<int> productIDs = productManager.gatherCartIDs();
+
+            // Save transaction and update inventory
+            transactionManager.addTransaction(userID, productIDs, totalAmount, rewardPoints);
+            productManager.purchase(); // Updates inventory after purchase
+
+            std::cout << "Purchase completed successfully!" << std::endl;
+            std::cout << "Total amount: $" << totalAmount << std::endl;
+            std::cout << "Reward points earned: " << rewardPoints << std::endl;
+        }
+        else
+        {
+            std::cout << "Purchase canceled. Returning to the main menu." << std::endl;
+        }
     }
     else if (userChoice == 2){
         //Implement way for user to Redeem Rewards
