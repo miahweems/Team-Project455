@@ -125,7 +125,7 @@ void userMenu()
          
     Return's 0 when commanded to break out of the loop, otherwise returns 1
 */
-bool userTools(int userChoice, ProductManager &productManager, TransactionManager &transactionManager, int userID)
+bool userTools(int userChoice, ProductManager &productManager, TransactionManager &transactionManager, CustomerManager &customerManager, Customer &customer, int userID)
 {
     if (userChoice == 1) // Shopping
     {
@@ -166,6 +166,10 @@ bool userTools(int userChoice, ProductManager &productManager, TransactionManage
             transactionManager.addTransaction(userID, productIDs, totalAmount, rewardPoints);
             productManager.purchase(); // Updates inventory after purchase
 
+            // Update customer reward points
+            customer.rewardPoints += rewardPoints; // Add points directly
+            customerManager.saveCustomers();       // Save the updated customer data to the file
+
             std::cout << "Purchase completed successfully!" << std::endl;
             std::cout << "Total amount: $" << totalAmount << std::endl;
             std::cout << "Reward points earned: " << rewardPoints << std::endl;
@@ -200,6 +204,7 @@ int main()
     ProductManager existingProduct; //instance of productmanager class
     Customer customer; //customer object
     std::string usernameEntered; //string var to hold the username entered by the user
+        TransactionManager transactionManager;
     while(1) 
     {
         mainMenu();
@@ -212,14 +217,28 @@ int main()
             managerTools(managersChoice);
         }
         
-        else if (choice == 2) {
+        else if (choice == 2)
+        {
             std::cout << "Enter Your Username: " << std::endl;
-            std::cin >> usernameEntered; 
-            existingCustomer.loginWithUsername(usernameEntered);
-            std::cout << "Logged in as " << usernameEntered << std::endl;
-            userMenu();
-            std::cin >> userChoice;
-            
+            std::cin >> usernameEntered;
+
+            // Login the user and get the customer object
+            try
+            {
+                *customer = existingCustomer.loginWithUsername(usernameEntered);
+                std::cout << "Logged in as " << customer->userName << std::endl;
+
+                // Display user menu
+                userMenu();
+                std::cin >> userChoice;
+
+                // Pass the customer object to userTools for interaction
+                userTools(userChoice, existingProduct, transactionManager, existingCustomer, *customer, customer->id);
+            }
+            catch (const std::runtime_error &e)
+            {
+                std::cerr << e.what() << std::endl;
+            }
         }
         
         else if (choice == 3) {
