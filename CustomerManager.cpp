@@ -245,9 +245,9 @@ void CustomerManager::readCustomers() {
  * exist.
  */
 Customer CustomerManager::loginWithUsername(std::string username) {
-    for (const Customer &account: customerVector) {
-        if (account.userName == username) {
-            return account;
+    for (int i = 0; i < customerVector.size(); ++i) {
+        if (username == customerVector[i].userName) {
+            return customerVector[i];
         } else {
             continue;
         }
