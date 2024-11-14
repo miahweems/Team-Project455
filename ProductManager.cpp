@@ -63,6 +63,7 @@ public:
 
 // Constructor
 ProductManager::ProductManager() {
+    loadProducts();
 }
 
 // Destructor
