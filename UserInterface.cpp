@@ -6,7 +6,6 @@
 #include "ProductManager.cpp"
 #include "Transaction.h"
 #include "TransactionManager.cpp"
-#include "bools.cpp"
 
 /*
     Return Type: Void
@@ -28,7 +27,6 @@ void mainMenu() {
     std::cout << "Enter your choice (1-4): ";
 
 }
-
 /*
     Return Type: Void
     No Params
@@ -44,9 +42,10 @@ void managerMenu() {
     std::cout << "===== 2. Product Addition =====" << std::endl;
     std::cout << "===== 3. Product Removal =====" << std::endl;
     std::cout << "===== 4. View Customer By ID =====" << std::endl;
-    std::cout << "===== 5. Exit =====" << std::endl;
+    std::cout << "===== 5. Assign Reward Points =====" << std::endl;
+    std::cout << "===== 6. Exit =====" << std::endl;
 
-    std::cout << "Enter your choice (1-5): ";
+    std::cout << "Enter your choice (1-6): ";
 }
 
 /*
@@ -60,6 +59,7 @@ bool managerTools(int managersChoice) {
     CustomerManager existingCustomer;
     ProductManager newProduct;
     ProductManager existingProduct;
+    float rewardPtPercentage;
     if (managersChoice == 1) {   //Customer Removal
                 int userIDtoRemove = 0;
                 existingCustomer.outputUsernamesAndIDs();
@@ -67,33 +67,35 @@ bool managerTools(int managersChoice) {
                 std::cin >> userIDtoRemove;
                 existingCustomer.removeCustomer(userIDtoRemove);
                 std::cout << "Customer Removed Successfully!" << std::endl;
-            }
-            else if (managersChoice == 2) { //Product Addition
-                newProduct.addProduct();
-            }
-            else if (managersChoice == 3) { //Product Removal
-                int prodIDtoRemove = 0;
-                std::cout << "Enter the ID of the product to be removed: ";
-                std::cin >> prodIDtoRemove;
-                existingProduct.removeProduct(prodIDtoRemove);
-                std::cout << "Product Removed Successfully!" << std::endl;
-            }
-             else if (managersChoice == 4) { //View Customer By ID
-                int userIDToFind = 0;
-                std::cout << "Enter the ID of the customer to be viewed: ";
-                std::cin >> userIDToFind;
-                existingCustomer.outputUserInfo(userIDToFind);
+    }
+    else if (managersChoice == 2) { //Product Addition
+        newProduct.addProduct();
+    }
+    else if (managersChoice == 3) { //Product Removal
+        int prodIDtoRemove = 0;
+        std::cout << "Enter the ID of the product to be removed: ";
+        std::cin >> prodIDtoRemove;
+        existingProduct.removeProduct(prodIDtoRemove);
+        std::cout << "Product Removed Successfully!" << std::endl;
+    }
+        else if (managersChoice == 4) { //View Customer By ID
+        int userIDToFind = 0;
+        std::cout << "Enter the ID of the customer to be viewed: ";
+        std::cin >> userIDToFind;
+        existingCustomer.outputUserInfo(userIDToFind);
 
-            }
-            
-            else if (managersChoice == 5) { // Exit
-                std::cout << "Exiting the Program. Goodbye!" << std::endl;
-                return 0;
-            }
-            else {
-                std::cout << "Invalid choice, please try again." << std::endl;
-            }
-            return 1;
+    }
+    else if (managersChoice == 5) {
+        //implement reward points calculator
+    }
+    else if (managersChoice == 6) { // Exit
+        std::cout << "Exiting the Program. Goodbye!" << std::endl;
+        return 0;
+    }
+    else {
+        std::cout << "Invalid choice, please try again." << std::endl;
+    }
+    return 1;
 }
 
 /*
@@ -122,10 +124,55 @@ void userMenu()
          
     Return's 0 when commanded to break out of the loop, otherwise returns 1
 */
-bool userTools(int userChoice)
+bool userTools(int userChoice, ProductManager &productManager, TransactionManager &transactionManager, int userID)
 {
-    if (userChoice == 1){
-        //Implement way for user to "shop"
+    if (userChoice == 1) // Shopping
+    {
+        std::string productName;
+        int addMore = 1;
+
+        // Display available products
+        std::cout << "===== Available Products =====" << std::endl;
+        productManager.displayAvalibleProducts();
+
+        // Add products to cart
+        while (addMore == 1)
+        {
+            std::cout << "Enter the name of the product to add to cart: ";
+            std::cin >> productName;
+            productManager.addProductToCart(productName);
+
+            std::cout << "Do you want to add more products? (1 for Yes, 0 for No): ";
+            std::cin >> addMore;
+        }
+
+        // Display cart contents and total
+        std::cout << "===== Your Cart =====" << std::endl;
+        productManager.displayCart();
+
+        // Confirm and complete the purchase
+        int confirmPurchase;
+        std::cout << "Do you want to complete the purchase? (1 for Yes, 0 for No): ";
+        std::cin >> confirmPurchase;
+
+        if (confirmPurchase == 1)
+        {
+            float totalAmount = productManager.totalPriceOfCart();
+            int rewardPoints = productManager.recivePoints(); // Calculate reward points
+            std::vector<int> productIDs = productManager.gatherCartIDs();
+
+            // Save transaction and update inventory
+            transactionManager.addTransaction(userID, productIDs, totalAmount, rewardPoints);
+            productManager.purchase(); // Updates inventory after purchase
+
+            std::cout << "Purchase completed successfully!" << std::endl;
+            std::cout << "Total amount: $" << totalAmount << std::endl;
+            std::cout << "Reward points earned: " << rewardPoints << std::endl;
+        }
+        else
+        {
+            std::cout << "Purchase canceled. Returning to the main menu." << std::endl;
+        }
     }
     else if (userChoice == 2){
         //Implement way for user to Redeem Rewards
@@ -141,18 +188,17 @@ bool userTools(int userChoice)
 }
 
 
-int main() 
+int main()
 {
+    CustomerManager customerManager = CustomerManager();
+    ProductManager productManager = ProductManager();
+    TransactionManager transactionManager = TransactionManager();
+    Customer user;
     int choice = 0; //users choice for CLI
     int managersChoice = 0; //managers choice for CLI
     int userChoice = 0; //choice for user menu
-    CustomerManager newCustomer;  //instance of customermanager class
-    CustomerManager existingCustomer; //instance of customermanager class
-    ProductManager newProduct; //instance of productmanager class
-    ProductManager existingProduct; //instance of productmanager class
-    Customer customer; //customer object
     std::string usernameEntered; //string var to hold the username entered by the user
-    while(1) 
+    while(true)
     {
         mainMenu();
         std::cin >> choice;
@@ -165,17 +211,20 @@ int main()
         }
         
         else if (choice == 2) {
-            std::cout << "Enter Your Username: " << std::endl;
-            std::cin >> usernameEntered; 
-            existingCustomer.loginWithUsername(usernameEntered);
-            std::cout << "Logged in as " << usernameEntered << std::endl;
-            userMenu();
-            std::cin >> userChoice;
-            
+            std::cout << "Enter Your Username: ";
+            std::cin >> usernameEntered;
+            try {
+                user = customerManager.loginWithUsername(usernameEntered);
+                std::cout << "Logged in as " << usernameEntered << std::endl;
+                userMenu();
+                std::cin >> userChoice;
+            } catch (const std::invalid_argument& e) {
+                std::cout << e.what() << std::endl;
+            }
         }
         
         else if (choice == 3) {
-            newCustomer.registerCustomer();
+            customerManager.registerCustomer();
         }
         
         else if (choice == 4) {
